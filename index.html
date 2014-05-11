@@ -3,134 +3,115 @@
 <head>
 <meta charset="utf-8">
 <title></title>
-
-<!--<link rel="stylesheet" type="text/css" href="http://blog.imfer.me/css/typo.css">
-<style>
-html,
-body,
-.page{
-    width: 100%;
-    height: 100%
-}
-a{
-    color: #65b590
-}
-.hd{
-    width: 20%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    text-align: center
-}
-.avatar{
-    display: block;
-    height: 200px;
-}
-.side{
-    width: 20%;
-    padding-top: 200px;
-    background-color: #f6f6f1;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 0;
-}
-.main{
-    margin-left: 20%;
-}
-
-.side > .content,
-.main > .content{
-    padding: 10px;
-}
-</style>-->
+<style type="text/css">
+.hide{}
+</style>
 </head>
 <body>
-
-<div class="page">
-
-<!--<div class="hd"><a href="#" class="avatar"><img src="https://avatars1.githubusercontent.com/u/554934?s=120" alt="Colin Fan"></a></div>-->
-
-<div class="main">
-    <div class="content">
-        <ul>
-            <li><a href="#">centos 5 安装 nodejs</a><span>2014-12-1</span></li>
-            <li><a href="#">centos 5 安装 dropbox 同步文件</a><span>2014-12-1</span></li>
-            <li><a href="#">Raspberry Pi 安装 nodejs</a><span>2014-12-1</span></li>
-            <li><a href="#">IE9兼容视图的问题</a><span>2014-12-1</span></li>
-            <li><a href="#">[转]国内npm镜像</a><span>2014-12-1</span></li>
-            <li><a href="#">Twitter、豆瓣分享URL参数</a><span>2014-12-1</span></li>
-            <li><a href="#">webapp注意的几点</a><span>2014-12-1</span></li>
-            <li><a href="#">解决Firefox不支持字体跨域</a><span>2014-12-1</span></li>
-            <li><a href="#">让Raspberry Pi 带你翻墙</a><span>2014-12-1</span></li>
-            <li><a href="#">Nginx代理非80端口</a><span>2014-12-1</span></li>
+<script type="text/template" id="template_main">
+<ul class="archive">
+<% _.each(article, function(article, i){ %>
+    <li><a href="#!article/<%= article.link %>"><%= article.title %></a></li>
+    <% if( (i % 9 == 0) && (i != 0) ){ %>
         </ul>
+        <ul class="archive hide">
+    <% } %>
+<% }); %>
+</ul>
+</script>
 
-        <p>
-            <a href="#">&#171;</a>
-            <a href="#">&#187;</a>
-        </p>
-    </div>
+<script type="text/template" id="template_pagination">
+<div class="pagination">
+<% var n = 0; %>
+<% _.each(article, function(article, i){ %>
+    <% if( (i % 9 == 0) && (i != 0) ){ %>
+        <a href="#!page/<%- n %>"><%- n %></a>
+        <% n++; %>
+    <% } %>
+<% }); %>
 </div>
+</script>
 
-<div class="side">
-    <div class="content">
-        <ul>
-            <li><a href="#">F2E</a></li>
-            <li><a href="#">Linux</a></li>
-            <li><a href="#">UI/UX</a></li>
-            <li><a href="#">Null</a></li>
-        </ul>
-        <p>&copy; <a href="#">imfer.me</a></p>
-    </div>
-</div>
+<script type="text/template" id="template_article">
+<div><a href="/" title="返回">&#171;</a></div>
+<%= post =%>
+</script>
 
-</div>
 
-<script src="http://cdn.staticfile.org/mustache.js/0.7.2/mustache.min.js"></script>
-<script src="http://cdn.staticfile.org/jquery/1.7.2/jquery.min.js"></script>
-<script src="http://cdn.staticfile.org/json2/20130526/json2.min.js"></script>
+<div id="main"></div>
+<div id="pagination"></div>
+
+<script src="json2.js"></script>
+<script src="jquery.min.js"></script>
+<script src="underscore-min.js"></script>
+<script src="backbone-min.js"></script>
+<script src="showdown-min.js"></script>
 <script>
-var Blog = {
-    router: function(){
-        var hash = window.location.hash;
-        if(hash.indexOf("#!") != -1){
-            hash = hash.substr(2);
-            hash = hash.split("/");
+$(function(){
+    var blog = {};
 
-            // TAG视图
-            if(hash[0] == 'tag'){
-                console.log('TAG');
-            }
+    var ViewMain = Backbone.View.extend({
+        main: "#main",
+        pagination: "#pagination",
 
-            //正文视图
-            if(hash[0] == 'post'){
-                console.log('POST');
+        initialize: function(){
+            var that = this;
+            if(!blog.data){
+                $.getJSON("meta.json", function(data){
+                    blog.data = data;
+                    that.make(blog.data);
+                });
             }
+        },
 
-            //存档视图
-            if(hash[0] == 'archive'){
-                console.log('ARCHIVE');
-            }
+        make: function(context){
+            var template_main = _.template($("#template_main").html(), context);
+            $(this.main).html(template_main);
+
+            /*var template_pagination = _.template($("#template_pagination").html(), context);
+            $(this.pagination).html(template_pagination);*/
         }
-        else{
-            console.log('to INDEX')
+    });
+
+    var ViewArticle = Backbone.View.extend({
+        el: "#main",
+        initialize: function(){
+            var md = new Showdown.converter();
+            $.get('article/' + blog.article + ".md", function(data){
+
+                var post = "<p><a href='/'>&#171;</a></p>" + md.makeHtml(data);
+                $("#main").html(post);
+            });
         }
+    });
 
-    },
+    var AppRouter = Backbone.Router.extend({
+        routes: {
+            ""  : "index",
+            "!article/:title": "article"
+        },
 
-    view: function(){
+        index: function(){
+            if(!view_main){
+                var view_main = new ViewMain;
+            }
+            
+            console.log("index")
+        },
 
-    },
+        article: function(title){
+            blog.article = title;
+            if(!view_article){
+                var view_article = new ViewArticle;
+            }
+            console.log("article")
+        }
+    });
 
-    init: function(){
-        Blog.router();
-    }
-}
-
-Blog.init();
+    
+    var app = new AppRouter();
+    Backbone.history.start();
+})
 </script>
 </body>
 </html>
