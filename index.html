@@ -10,15 +10,15 @@
 </script>
 <div id="list"></div>
 
-<script src="jquery.min.js"></script>
-<script src="underscore-min.js"></script>
-<script src="backbone-min.js"></script>
+<script src="http://cdn.staticfile.org/jquery/1.9.0/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/underscore.js/1.6.0/underscore-min.js"></script>
+<script src="http://cdn.staticfile.org/backbone.js/1.1.2/backbone-min.js"></script>
 <script>
 
 $(function() {
     var Post = Backbone.Model.extend({
         initialize: function(){
-            console.log('create model');
+            //console.log('create model');
         },
 
         defaults: {
@@ -29,7 +29,7 @@ $(function() {
 
     var List = Backbone.Collection.extend({
         initialize: function(){
-            console.log('create collection');
+            //console.log('create collection');
         },
         model: Post,
         url: 'meta.json',
@@ -38,19 +38,33 @@ $(function() {
     var ListView = Backbone.View.extend({
         initialize: function(){
             _.bindAll(this, 'render');
-
-            this.render();
+            this.meta();
         },
-        render: function(){
+
+        meta: function(){
+            var self = this;
             this.list = new List();
             this.list.fetch({
                 success: function(collection, response){
-                    
+                    self.data = response;
+                    self.render();
                 },
                 error: function(collection, response){
-                    console.log('error');
+                    //console.log('error');
                 }
             });
+        },
+
+        render: function(){
+            if(!this.data){
+                this.meta();
+                return;
+            }
+
+            //反序
+            function _sortbydate(a, b){
+                return new Regxen
+            }
         }
     });
 
