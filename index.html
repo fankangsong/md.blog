@@ -1,18 +1,38 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 <head>
-<title></title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>IMFER.ME</title>
+<meta name="author" content="fankangsong@gmail.com">
 </head>
 <body>
 
-<script type="text/template" id="list_template">
+<script type="text/template" id="template_list">
+<ul>
+<% _.each(data, function(items){ %>
+    <li><a href="#!post/<%= items.link %>"><%= items.title %></a>
+        <span class="date"><%= items.link.substring(0, 10) %></span>
+    </li>
+<% }) %>
+</ul>
 
+
+<div>
+<% _.each(links, function(items, i){ %>
+        <a href="#!page/<%= Number(i + 1) %>"
+            <% if(i == current){ %>
+                class="current"
+            <% } %>
+        ><%= Number(i + 1) %></a> 
+<% }) %>
+</div>
 </script>
-<div id="list"></div>
-
+<div id="main"></div>
 <script src="http://cdn.staticfile.org/jquery/1.9.0/jquery.min.js"></script>
 <script src="http://cdn.staticfile.org/underscore.js/1.6.0/underscore-min.js"></script>
 <script src="http://cdn.staticfile.org/backbone.js/1.1.2/backbone-min.js"></script>
+<script src='http://cdn.staticfile.org/showdown/0.3.1/showdown.min.js'></script>
 <script>
 
 $(function() {
@@ -35,16 +55,26 @@ $(function() {
         url: 'meta.json',
     });
 
-    var ListView = Backbone.View.extend({
+    var View = Backbone.View.extend({
         initialize: function(){
-            _.bindAll(this, 'render');
-            this.meta();
+            //绑定this
+            _.bindAll(this, 'meta','render', 'archives', 'post');
+            //this.meta();
         },
 
         meta: function(){
             var self = this;
+
+            //实例一个Collection
             this.list = new List();
+
+            //获取实例的JSON数据
             this.list.fetch({
+                /*
+                    [option]
+                    collection 实例的collection,
+                    response fech的JSON数据
+                */
                 success: function(collection, response){
                     self.data = response;
                     self.render();
@@ -56,25 +86,96 @@ $(function() {
         },
 
         render: function(){
+            console.log('index')
             if(!this.data){
                 this.meta();
                 return;
             }
-
             //反序
-            function _sortbydate(a, b){
-                return new Regxen
+            this.data = _.sortBy(this.data, function(items){
+                return -( Number(items.link.substring(0, 10).replace(/\-/g, '')) )
+            });
+
+            //分组
+            var a = 0;
+            this.group = []
+            this.group[a] = []
+            for(var i = 0; i < this.data.length; i++){
+                this.group[a].push(this.data[i]);
+                if( (i % 9) == 0 && i != 0){
+                    a++;
+                    this.group[a] = [];
+                }
             }
+
+            //首页
+            if(this.path == 'index'){
+                this.archives(0);
+            }
+
+            //分页
+            if(this.path == 'page'){
+                this.archives(Number(this.par - 1));
+            }
+
+            //正文
+            if(this.path == 'post'){
+                this.post(this.title);
+            }
+        },
+
+        archives: function(par){
+            var template_list = _.template($('#template_list').html(), {
+                data: this.group[par],
+                links: this.group,
+                current: par
+            });
+            $('#main').html(template_list);
+        },
+
+        post: function(){
+            var self = this;
+
+            //加个title成本好高
+            _.each(this.data, function(items, i){
+                if(self.par == items.link){
+                    //console.log(items.title);
+                    $('title').html(items.title + ' - IMFER.ME');
+                }
+            });
+
+            //渲染markdown
+            var showpost = new Showdown.converter();
+            $.get('post/' + this.par + '.md?' + Math.random(), function(response){
+                $('#main').html(showpost.makeHtml(response))
+            });
         }
     });
 
     var AppRouter = Backbone.Router.extend({
         routes: {
-            '': 'index'
+            '': 'index',
+            '!page/:num': 'page',
+            '!post/:title': 'post'
+        },
+
+        view: function(path, par){
+            var main_view = new View;
+            main_view.render();
+            main_view.path = path;
+            main_view.par = par;
         },
 
         index: function(){
-            var listview = new ListView();
+            this.view('index', '');
+        },
+
+        page: function(num){
+            this.view('page', num);
+        },
+
+        post: function(title){
+            this.view('post', title);
         }
     });
 
