@@ -4,22 +4,41 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>IMFER.ME</title>
+<link rel="shortcut icon" href="http://imfer.me/favicon.ico?lohs6" type="image/x-icon" >
 <meta name="author" content="fankangsong@gmail.com">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" type="text/css" href="http://imfer.me/icons.css">
+<link rel="stylesheet" type="text/css" href="style.css?05212228">
 </head>
 <body>
-
-<script type="text/template" id="template_list">
-<div class="header">
-<a href="/">IMFER.ME</a>
-<div class="tags">
+<script type="text/template" id="msg">
+<p class="msg">呵呵呵，真尴尬。人肉<a href="/">刷新</a>一次页面。</p>
+</script>
+<script type="text/template" id="template_main">
+<!-- header -->
+<div class="header" id="header">
+<a href="javascript:;" id="iconmenu" class="icon-menu"></a>
+<div class="inner">
+<img src="https://avatars1.githubusercontent.com/u/554934" class="avatar">
+<a href="/#" class="logo">IM<span>FER</span>.ME</a>
+<ul class="tags">
 <% _.each(tags, function(items, i){ %>
-    <a href="#!tags/<%= items %>/1"><%= items %></a>
+
+    <li><a href="#!tags/<%= items %>/1" 
+    <% if(items == current_tag){ %>
+        class="current"
+    <% } %>
+    ><%= items %></a></li>
 <% }) %>
+</ul> <!-- tags end -->
 </div>
 </div>
+<!-- header end -->
 
-
-<ul>
+<!-- content -->
+<div class="content" id="content">
+<!-- archives -->
+<ul class="archives">
 <% _.each(data, function(items){ %>
     <li><a href="#!post/<%= items.link %>"><%= items.title %></a>
         <span class="date"><%= items.link.substring(0, 10) %></span>
@@ -27,8 +46,10 @@
 <% }) %>
 </ul>
 
-<div>
+<!-- archives end -->
 
+<!-- pagination -->
+<div class="pagination">
 <% if(links.length > 1){ %>
     <% _.each(links, function(items, i){ %>
             <% if(path == 'tag'){ %>
@@ -43,16 +64,38 @@
     <% }) %>
 <% } %>
 </div>
+<!-- pagination end -->
+</div>
+<!-- content end -->
 
+<!-- footer -->
+<div class="footer">
+    <p>&copy; <a href="//imfer.me">imfer.me</a> 2014</a></p>
+</div>
+<!-- footer end -->
+</script>
+<script type="text/tempalte" id="template_post">
+<div class="post-content">
+    <div class="post-bd">
+        <a class="icon-link" href="http://blog.imfer.me/#!post/<%= link %>" title="本文链接"></a>
+        <%= post %>
+    </div>
+    <div class="post-ft">讨论：
+    <a href="https://twitter.com/share?url=http%3A%2F%2Fblog.imfer.me%2F%23%21post%2F<%= link %>&screen_name=boogiefer&text=<%= title %>" target="_blank">@Twitter</a> / 
+    <a href="http://www.douban.com/share/service?href=http%3A%2F%2Fblog.imfer.me%2F%23%21post%2F<%= link %>&comment=@fks1945&name=<%= title %>&sel=&v=1" target="_blank">@豆瓣</a>
+    </div>
+</div>
 <div class="footer">
     <p>&copy; <a href="//imfer.me">imfer.me</a> 2014</a></p>
 </div>
 </script>
-<div id="main"></div>
+<div id="loading" class="loading"><div class="bar"></div></div>
+<div class="page" id="main"></div>
+
 <script src="http://cdn.staticfile.org/jquery/1.9.0/jquery.min.js"></script>
 <script src="http://cdn.staticfile.org/underscore.js/1.6.0/underscore-min.js"></script>
 <script src="http://cdn.staticfile.org/backbone.js/1.1.2/backbone-min.js"></script>
 <script src='http://cdn.staticfile.org/showdown/0.3.1/showdown.min.js'></script>
-<script src="app.js"></script>
+<script src="app.js?05221521"></script>
 </body>
 </html>

@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>test</title>
+<meta name="author" content="fankangsong@gmail.com">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+</head>
+<body>
+
+<script type="text/template" id="template_list">
+<div class="header">
+<a href="/">IMFER.ME</a>
+<div class="tags">
+<% _.each(tags, function(items, i){ %>
+    <a href="#!tags/<%= items %>/1"><%= items %></a>
+<% }) %>
+</div>
+</div>
+
+
+<ul>
+<% _.each(data, function(items){ %>
+    <li><a href="#!post/<%= items.link %>"><%= items.title %></a>
+        <span class="date"><%= items.link.substring(0, 10) %></span>
+    </li>
+<% }) %>
+</ul>
+
+<div>
+
+<% if(links.length > 1){ %>
+    <% _.each(links, function(items, i){ %>
+            <% if(path == 'tag'){ %>
+                <a href="#!tags/<%= current_tag %>/<%= Number(i + 1) %>"
+            <% } else{ %>
+                <a href="#!page/<%= Number(i + 1) %>"
+            <% } %>
+            <% if(i == current_num){ %>
+                class="current"
+            <% } %>
+        ><%= Number(i + 1) %></a> 
+    <% }) %>
+<% } %>
+</div>
+<div class="footer">
+    <p>&copy; <a href="//imfer.me">imfer.me</a> 2014</a></p>
+</div>
+</script>
+
+<div id="main">
+	<a href="test.html">home</a>
+	<a href="/test.html#">index</a>
+	<a href="#!page/1">page</a>
+	<a href="#!tags/desing/1">tags</a>
+	<a href="#!post/2012-10-12-test">post</a>
+</div>
+<script src="http://cdn.staticfile.org/jquery/1.9.0/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/underscore.js/1.6.0/underscore-min.js"></script>
+<script src="http://cdn.staticfile.org/backbone.js/1.1.2/backbone-min.js"></script>
+<script>
+$(function(){
+	var Post = Backbone.Model.extend({
+        initialize: function(){
+            //console.log('create model');
+        },
+
+        defaults: {
+            'title': '',
+            'link': ''
+        }
+    });
+
+    var List = Backbone.Collection.extend({
+        initialize: function(){
+            //console.log('create collection');
+        },
+        model: Post
+    });
+
+	var AppView = Backbone.View.extend({
+		initialize: function(){
+			//console.log('view active');
+		},
+
+		meta: function(){
+			
+			if(!this.archives){
+                console.log('create list')
+				this.archives = new List();
+				this.archives.fetch({
+					url: 'meta.json',
+					success: function(){
+						
+					}
+				})
+			}
+		}
+
+	});
+
+	var AppRouter = Backbone.Router.extend({
+        routes: {
+            '': 'index',
+            '!page/:num': 'page',
+            //'!tags/:tag': 'tag',
+            '!tags/:tag/:num': 'tag',
+            '!post/:title': 'post',
+        },
+
+        view: function(path, par, tag_page_num){
+        	if(!this.appview){
+        		//console.log('new view')
+        		this.appview = new AppView;
+        	}
+        	this.appview.meta();
+        	this.appview.path  = path;
+        },
+
+        index: function(){
+            this.view('index', '', '');
+        },
+
+        page: function(num){
+            this.view('page', num);
+        },
+
+        tag: function(tag, num){
+            this.view('tag', tag, num);
+        },
+
+        post: function(title){
+            this.view('post', title);
+        }
+    });
+
+    var app = new AppRouter;
+    Backbone.history.start();
+})
+</script>
+</body>
+</html>
