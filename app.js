@@ -52,30 +52,29 @@ $(function() {
 
         render: function(){
             //反序
-            g_meta.data = _.sortBy(g_meta.data, function(items){
+            META.data = _.sortBy(META.data, function(items){
                 return -( Number(items.link.substring(0, 10).replace(/\-/g, '')) );
             });
             
             //首页
-            if(g_meta.path == 'index'){
-                this.groups = this.groupBy(g_meta.data);
-                this.archives(this.groups, 0);
+            if(META._route == 'index'){
+                META._groups = this.groupBy(META.data);
+                this.archives(META._groups, 0);
             }
 
             //分页
-            if(g_meta.path == 'page'){
-                this.groups = this.groupBy(g_meta.data);
-                this.archives(this.groups, Number(g_meta.par - 1));
+            if(META._route == 'page'){
+                META._groups = this.groupBy(META.data);
+                this.archives(META._groups, Number(META._par - 1));
             }
 
-            if(g_meta.path == 'tag'){
-                this.groups = this.groupBy(this.filter());
-                //console.log(this.groups[0]);
-                this.archives(this.groups, Number(g_meta.tag_page_num - 1))
+            if(META._route == 'tag'){
+                META._groups = this.groupBy(this.filter());
+                this.archives(META._groups, Number(META._tag_num - 1))
             }
 
             //正文
-            if(g_meta.path == 'post'){
+            if(META._route == 'post'){
                 this.post(this.title);
             }
         },
@@ -86,33 +85,32 @@ $(function() {
 
         filter: function(){
             var self = this;
-            var tags =  _.filter(g_meta.data, function(items, i){
-                return items.tag == g_meta.par
+            META._tags =  _.filter(META.data, function(items, i){
+                return items.tag == META._par
             });
-            //console.log(tags);
-            return tags;
+            return META._tags;
         },
 
         groupBy: function(objs){
             var a = 0;
-            this.groups = [];
-            this.groups[a] = [];
+            META._groups = [];
+            META._groups[a] = [];
 
             if(objs.length > 10){
                 for(var i = 0; i < objs.length; i++){
                     
                     if( (i % 12) == 0 && i != 0){
                         a++;
-                        this.groups[a] = [];
+                        META._groups[a] = [];
                     }
-                    this.groups[a].push(objs[i]);
+                    META._groups[a].push(objs[i]);
                 }
 
-                return this.groups;
+                return META._groups;
             }
             else{
-                this.groups[a] = objs;
-                return this.groups;
+                META._groups[a] = objs;
+                return META._groups;
             }
         },
 
@@ -122,16 +120,17 @@ $(function() {
                 $('title').html('IMFER.ME').attr('data-title', false);
             }
 
-            var tags = _.pluck(g_meta.data, 'tag');
+            var tags = _.pluck(META.data, 'tag');
             tags = _.uniq(tags);
-            var current_tag = g_meta.par;
+            tags = _.sortBy(tags);
+            var current_tag = META._par;
 
             var template_main = _.template($('#template_main').html(), {
                 data: groups[page_num],
                 links: groups,
                 tags: tags,
                 current_tag: current_tag,
-                path: g_meta.path,
+                path: META._route,
                 current_num: page_num
             });
             $(this.el).html(template_main);
@@ -148,26 +147,26 @@ $(function() {
             $('.footer').addClass('fix');
 
             //加个title
-            this.page_title = $('title').html();
-            _.each(g_meta.data, function(items, i){
-                if(self.par == items.link){
-                   $('title').html(items.title + '- ' + self.page_title).attr('data-title', true);
-                   self.post_title = items.title;
+            META.page_title = $('title').html();
+            _.each(META.data, function(items, i){
+                if(META._par == items.link){
+                   $('title').html(items.title + '- ' + META.page_title).attr('data-title', true);
+                   META.post_title = items.title;
                 }
             });
 
             //渲染markdown
             var showpost = new Showdown.converter();
-            $.get('post/' + g_meta.par + '.md?' + Math.random(), function(response){
+            $.get('post/' + META._par + '.md?' + Math.random(), function(response){
                 var template_post = _.template($('#template_post').html(), {
                     post: showpost.makeHtml(response),
-                    link: self.par,
-                    title: self.post_title
+                    link: META._par,
+                    title: META.post_title
                 });
 
                 $(self.el).html(template_post);
 
-                //$(self.el).html();
+            }).done(function(){
                 bar.animate({
                 'width': '100%'
                 }, 200, function(){
@@ -175,6 +174,11 @@ $(function() {
                         'width': 0
                     })
                 })
+            }).fail(function(){
+                bar.animate({
+                'width': '0'
+                }, 200);
+                var msg = new AppViewMsg();
             });
         }
         
@@ -188,58 +192,46 @@ $(function() {
             '!post/:title': 'post',
         },
 
-        view: function(path, par, tag_page_num){
-            g_meta.path = path;
-            g_meta.par = par;
-            g_meta.tag_page_num = tag_page_num;
-            if(mainView){
-                mainView.remove();
-            }
-            var mainView = new AppView();
-            mainView.render()
-            
-        },
-
-        switchView: function (view, path, par, tag_page_num) {
-            g_meta.path = path;
-            g_meta.par = par;
-            g_meta.tag_page_num = tag_page_num;
+        view: function (appview, _route, _par, _tag_num) {
+            META._route = _route;
+            META._par = _par;
+            META._tag_num = _tag_num;
 
             if(this.currentView){
                 this.currentView.clearup();
             }
-            this.currentView = view;
+            this.currentView = appview;
             this.currentView.render();
         },
 
         index: function(){
-            var view = new AppView();
-            this.switchView(view, 'index');
+            var appview = new AppView();
+            this.view(appview, 'index');
         },
 
         page: function(num){
-            var view = new AppView();
-            this.switchView(view, 'page', num);
+            var appview = new AppView();
+            this.view(appview, 'page', num);
         },
 
         tag: function(tag, num){
-            var view = new AppView();
-            this.switchView(view, 'tag', tag, num);
+            var appview = new AppView();
+            this.view(appview, 'tag', tag, num);
         },
 
         post: function(title){
-            var view = new AppView();
-            this.switchView(view, 'post', title);
+            var appview = new AppView();
+            this.view(appview, 'post', title);
         }
     });
 
 
 
-    var g_meta = new List();
-    g_meta.fetch({
-        url: 'post/meta.json?' + Math.random(),
+    var META = new List();
+    META.fetch({
+        url: 'meta.json?' + Math.random(),
         success: function(collection, response){
-            g_meta.data = response;
+            META.data = response;
             var app = new AppRouter;
             Backbone.history.start();
         },
