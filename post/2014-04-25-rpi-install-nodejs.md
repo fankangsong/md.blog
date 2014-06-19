@@ -1,3 +1,5 @@
+#Raspberry Pi 安装Node.js
+
 Raspberry Pi如果编译安装node.js，网上有人尝试过需要3个小时。node其实有arm版本，下载之后，用/etc/profile配置下环境变量，5分钟搞掂。
 
 下载arm版本的node并解压缩：

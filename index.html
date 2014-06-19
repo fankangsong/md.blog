@@ -1,12 +1,17 @@
 <!DOCTYPE HTML>
+<!--[if lte IE 8]>
+<html class="iefix">
+<![endif]-->
+<!--[if (gt IE 9)|!(IE)]>-->
 <html>
+<!--<![endif]-->
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>IMFER.ME</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<link rel="shortcut icon" href="http://imfer.me/favicon.ico?nj7w" type="image/x-icon" >
+<link rel="shortcut icon" href="http://imfer.me/favicon.ico?8964" type="image/x-icon" >
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="apple-touch-icon" sizes="57x57" href="http://imfer.me/apple-touch-icon-57x57.png" />
 <link rel="apple-touch-icon" sizes="72x72" href="http://imfer.me/apple-touch-icon-72x72.png" />
@@ -15,125 +20,96 @@
 <link rel="apple-touch-icon" sizes="120x120" href="http://imfer.me/apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" sizes="144x144" href="http://imfer.me/apple-touch-icon-144x144.png" />
 <link rel="apple-touch-icon" sizes="152x152" href="http://imfer.me/apple-touch-icon-152x152.png" />
+<link rel="alternate" type="application/rss+xml" href="http://pipes.yahoo.com/pipes/pipe.run?_id=cb3011f4a5a125baec76a025cd679b9e&_render=rss" title="RSS Feed">
 <link rel="stylesheet" type="text/css" href="http://imfer.me/icons.css">
-<link rel="stylesheet" type="text/css" href="style.css?05241725">
-<style type="text/css">
-.spinner {
-  margin: 100px auto;
-  width: 100px;
-  height: 30px;
-  text-align: center;
-  font-size: 10px;
-}
-.spinner > div {
-  background-color: #87c6b5;
-  height: 100%;
-  width: 6px;
-  display: inline-block;
-  
-  -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
-  animation: stretchdelay .8s infinite ease-in-out;
-}
-.spinner .rect2 {
-  -webkit-animation-delay: -1.1s;
-  animation-delay: -1.1s;
-}
-.spinner .rect3 {
-  -webkit-animation-delay: -1.0s;
-  animation-delay: -1.0s;
-}
-.spinner .rect4 {
-  -webkit-animation-delay: -0.9s;
-  animation-delay: -0.9s;
-}
-.spinner .rect5 {
-  -webkit-animation-delay: -0.8s;
-  animation-delay: -0.8s;
-}
-@-webkit-keyframes stretchdelay {
-  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
-  20% { -webkit-transform: scaleY(1.0) }
-}
-@keyframes stretchdelay {
-  0%, 40%, 100% { 
-    transform: scaleY(0.4);
-    -webkit-transform: scaleY(0.4);
-  }  20% { 
-    transform: scaleY(1.0);
-    -webkit-transform: scaleY(1.0);
-  }
-}
-</style>
+<link rel="stylesheet" type="text/css" href="style.css?147lo">
+<script>
+var _hmt = _hmt || [];
+</script>
 </head>
-<!--[if lte IE 8]> <body class="iefix"><div class="mask"></div><div class="no-ie">NO IE 8</div><![endif]-->
-<!--[if (gt IE 9)|!(IE)]>--> <body> <!--<![endif]-->
+<body>
+<!--[if lte IE 8]>
+<iframe frameborder="0" class="upgrade" src="http://windows.microsoft.com/zh-cn/internet-explorer/download-ie"></iframe>
+<![endif]-->
+
+
 <script type="text/template" id="msg">
 <p class="msg">呵呵呵，真尴尬。人肉<a href="">刷新</a>一次页面。</p>
 </script>
+
 <script type="text/template" id="template_main">
+
 <!-- header -->
 <div class="header" id="header">
-<a href="javascript:;" id="iconmenu" class="icon-menu"></a>
-<div class="inner">
-<img src="https://avatars1.githubusercontent.com/u/554934?s=200" class="avatar">
-<a href="/#" class="logo">IM<span>FER</span>.ME</a>
-<ul class="tags">
-<% _.each(tags, function(items, i){ %>
+    <a href="javascript:;" onclick="_hmt.push(['_trackEvent', 'nav', 'click', 'menu'])" id="iconmenu" class="icon-menu"></a>
 
-    <li 
-        <% if(items == current_tag){ %>
-            class="current"
-        <% } %>
-    ><a href="#!tags/<%= items %>/1"><%= items %></a></li>
-<% }) %>
-</ul> <!-- tags end -->
-</div>
+    <div class="inner">
+        <img src="https://avatars1.githubusercontent.com/u/554934?s=200" class="avatar">
+        <a href="/#" class="logo" onclick="_hmt.push(['_trackPageview', '/'])">IM<span>FER</span>.ME</a>
+
+        <ul class="tags">
+        <% _.each(tags, function(items, i){ %>
+            <li 
+                <% if(items == tags_actived){ %>
+                    class="current"
+                <% } %>
+            ><a href="#!tags/<%= items %>/1" onclick="_hmt.push(['_trackPageview', '/#!/tags/<%= items %>/1'])"><%= items %></a></li>
+        <% }) %>
+        </ul> <!-- tags end -->
+    </div>
 </div>
 <!-- header end -->
 
 <!-- content -->
 <div class="content" id="content">
-<!-- archives -->
-<ul class="archives">
-<% _.each(data, function(items){ %>
-    <li><a href="#!post/<%= items.link %>"><%= items.title %></a>
-        <span class="date"><%= items.link.substring(0, 10) %></span>
-    </li>
-<% }) %>
-</ul>
+
+    <!-- archives -->
+    <ul class="archives">
+    <% _.each(perPage, function(items){ %>
+        <li><a href="#!post/<%= items.link %>" onclick="_hmt.push(['_trackPageview', '/#!/post/<%= items.link %>'])"><%= items.title %></a>
+            <span class="date"><%= items.link.substring(0, 10) %></span>
+        </li>
+    <% }) %>
+    </ul>
 
 <!-- archives end -->
 
 <!-- pagination -->
-<div class="pagination">
-<% if(links.length > 1){ %>
-    <% _.each(links, function(items, i){ %>
-            <% if(path == 'tag'){ %>
-                <a href="#!tags/<%= current_tag %>/<%= Number(i + 1) %>"
-            <% } else{ %>
-                <a href="#!page/<%= Number(i + 1) %>"
-            <% } %>
-            <% if(i == current_num){ %>
-                class="current"
-            <% } %>
-        ><%= Number(i + 1) %></a> 
-    <% }) %>
-<% } %>
-</div>
+    <div class="pagination">
+    <% if(pagination.length > 1){ %>
+        <% _.each(pagination, function(items, i){ %>
+                <% if(routename == 'tag'){ %>
+                    <a href="#!tags/<%= tags_actived %>/<%= Number(i + 1) %>" onclick="_hmt.push(['_trackPageview', '/#!/<%= tags_actived %>/<%= Number(i + 1) %>'])"
+                <% } else{ %>
+                    <a href="#!page/<%= Number(i + 1) %>" onclick="_hmt.push(['_trackPageview', '/#!/page/<%= Number(i + 1) %>'])"
+                <% } %>
+                <% if(i == currentPage){ %>
+                    class="current"
+                <% } %>
+            ><%= Number(i + 1) %></a> 
+        <% }) %>
+    <% } %>
+    </div>
 <!-- pagination end -->
+
 </div>
 <!-- content end -->
 
 <!-- footer -->
 <div class="footer">
-    <p>&copy; <a href="//imfer.me">imfer.me</a>
-    <a href="http://pipes.yahoo.com/pipes/pipe.run?_id=cb3011f4a5a125baec76a025cd679b9e&_render=rss">RSS</p>
+    <p><a href="http://pipes.yahoo.com/pipes/pipe.run?_id=cb3011f4a5a125baec76a025cd679b9e&_render=rss">RSS</a>
+    <a href="https://github.com/fankangsong/md.blog">md.blog</a>
+    &copy; <a href="//imfer.me">imfer.me</a> 
+    </p>
+    
 </div>
 <!-- footer end -->
 </script>
+
 <script type="text/tempalte" id="template_post">
+
 <div class="post-content">
-    <div class="post-hd"><a href="#" class="icon-home" title="返回首页"></a></div>
+    <div class="post-hd"><a href="#" class="icon-home" title="返回首页" onclick="_hmt.push(['_trackEvent', 'content', 'click', 'home'])"></a></div>
     <div class="post-bd">
         <a class="icon-link" href="http://blog.imfer.me/#!post/<%= link %>" title="文章链接"></a>
         <%= post %>
@@ -143,9 +119,12 @@
     <a href="http://www.douban.com/share/service?href=http%3A%2F%2Fblog.imfer.me%2F%23%21post%2F<%= link %>&comment=@fks1945&name=<%= title %>&sel=&v=1" target="_blank">@豆瓣</a>
     </div>
 </div>
+
 <div class="footer">
-    <p>&copy; <a href="//imfer.me">imfer.me</a>
-    <a href="http://pipes.yahoo.com/pipes/pipe.run?_id=cb3011f4a5a125baec76a025cd679b9e&_render=rss">RSS</a></p>
+    <p><a href="http://pipes.yahoo.com/pipes/pipe.run?_id=cb3011f4a5a125baec76a025cd679b9e&_render=rss">RSS</a>
+    <a href="https://github.com/fankangsong/md.blog">md.blog</a>
+    &copy; <a href="//imfer.me">imfer.me</a> 
+    </p>
 </div>
 </script>
 <div id="loading" class="loading"><div class="bar"></div></div>
@@ -159,10 +138,18 @@
 </div>
 </div>
 
+<!--
+<script>
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+        document.write(unescape("%3Cscript src='" + _bdhmProtocol + 
+"hm.baidu.com/h.js%3F28042cf68929a02fefcb56e53dce2401' type='text/javascript'%3E%3C/script%3E"));
+</script>
+-->
+
 <script src="http://cdn.staticfile.org/jquery/1.9.0/jquery.min.js"></script>
 <script src="http://cdn.staticfile.org/underscore.js/1.6.0/underscore-min.js"></script>
 <script src="http://cdn.staticfile.org/backbone.js/1.1.2/backbone-min.js"></script>
 <script src='http://cdn.staticfile.org/showdown/0.3.1/showdown.min.js'></script>
-<script src="app.js?zg8s"></script>
+<script src="app.js?n87s"></script>
 </body>
 </html>

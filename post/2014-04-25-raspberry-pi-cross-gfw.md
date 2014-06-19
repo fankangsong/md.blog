@@ -1,3 +1,5 @@
+#让Raspberry Pi 带你翻墙
+
 ## 前言
 
 我一直用Raspberry Pi做翻墙的代理服务器，最开始只是为了避免在本地安装shadowsocks的客户端，于是shadowsocks客户端安装到RPi挂到路由器上。后来在VPS上安装了VPN给iPhone和iPad用，但是在iOS上VPN开开关关的太麻烦了，于是开始用Privoxy转发SOCKS到HTTP代理，配合[gfwlist2pac](https://github.com/clowwindy/gfwlist2pac)自动代理，但是问题又来了，PAC文件在iOS上性能太差了，经常让我的设备卡死。于是又想着用Privoxy的action来过滤，让规则和代理全部都在服务器完成，碰到过各种小问题，花了不少时间解决。折腾了这么久，把过程中的问题和经验记录一下。
@@ -5,36 +7,37 @@
 ##目录
 
 1. 服务器
-    1. [centos安装node](#vps%E5%AE%89%E8%A3%85node)
-    2. [centos安装shadowsocks](#centos%E5%AE%89%E8%A3%85shadowsocks)
+    1. [centos安装node](#title-1)
+    2. [centos安装shadowsocks](#title-1-1)
 
 2. 本地
-    1. [Raspberry Pi 安装node](#raspberry-pi-%E5%AE%89%E8%A3%85node)
-    2. [安装privoxy](#%E5%AE%89%E8%A3%85privoxy)
-    2. [使用gfw.action](#gfwaction)
-3. [动态域名](#%E5%AE%89%E8%A3%85privoxy)
+    1. [Raspberry Pi 安装node](#title-2-1)
+    2. [安装privoxy](#title-2-2)
+    2. [使用gfw.action](#title-2-3)
+3. [动态域名](#title-3)
 
-###VPS安装node
+###<a name="title-1"></a>VPS安装node
 
 移步：[centos安装node](https://github.com/fankangsong/note/wiki/centos-5-%E5%AE%89%E8%A3%85nodejs)
 
-###centos安装shadowsocks
+###<a name="title-1-1"></a>centos安装shadowsocks
 
 移步：[https://github.com/clowwindy/shadowsocks-nodejs](https://github.com/clowwindy/shadowsocks-nodejs)
 
-###Raspberry Pi 安装node
+###<a name="title-2-1"></a>Raspberry Pi 安装node
 
 在Raspberry Pi如何编译安装node速度非常慢，据说3个小时，所以node已提供编译好的arm版本，安装方法：[Raspberry Pi 快速安装node.js](https://github.com/fankangsong/note/wiki/Raspberry-Pi-%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85node.js)
 
 安装shadowsocks本地客户端一样使用npm，但是国内访问npm源网络很糟糕，不想美国VPS那样速度快，所以最好[设置一下npm镜像](https://github.com/fankangsong/note/wiki/npm%E5%9B%BD%E5%86%85%E9%95%9C%E5%83%8F%EF%BC%88%E8%BD%AC%EF%BC%89)
 
-###安装privoxy
+###<a name="title-2-2"></a>安装privoxy
 
 安装privoxy如果遇到这样的错误`insserv: warning: script 'mathkernel' missing LSB tags and overrides`，可以用一下方法处理[来源][1]：
 ```
 apt-get remove wolfram-engine
 ```
-###gfw.action
+
+###<a name="title-2-3"></a>gfw.action
 下载gfw.action：
 
     cd ~/
@@ -73,7 +76,7 @@ actionsfile gfw.action
 
 注意，如果使用action，就不要使用`forward`转发端口，因为action里已经设置了匹配的URL走socks代理，刚开始我就犯了这个低级错误。
 
-##动态域名指向RPi,随时随地翻墙
+##<a name="title-3"></a>动态域名指向RPi,随时随地翻墙
 
 [DNSPOD](https://www.dnspod.cn/)提供免费的域名解析服务，还有开放API。
 

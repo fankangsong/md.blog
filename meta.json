@@ -1,8 +1,8 @@
 [
 {"tag": "Music", "title": "《低俗小说》原声音乐介绍", "link": "2010-07-16-Pulp-Fiction-soundtrack"},
 {"tag": "Music", "title": "《地下乡愁蓝调》节选", "link": "2008-06-14-underground-homesick-blues"},
-{"tag": "Read", "title": "《平凡的世界》：生活是伟大的", "link": "2008-10-24-ping-fan-de-shi-jie"},
-{"tag": "Read", "title": "《请理解我》读书笔记", "link": "2013-05-10-please-understand-me"},
+{"tag": "Reading", "title": "《平凡的世界》：生活是伟大的", "link": "2008-10-24-ping-fan-de-shi-jie"},
+{"tag": "Reading", "title": "《请理解我》读书笔记", "link": "2013-05-10-please-understand-me"},
 {"tag": "Music", "title": "《我是传奇》提到Bob Marley", "link": "2010-08-05-i-am-legend-bob-marley"},
 {"tag": "Music", "title": "《长老的叮咛》歌词", "link": "2010-05-02-zhanglaodedingning"},
 {"tag": "Movie", "title": "《转山》跟西藏有半毛关系吗", "link": "2012-03-06-zhuanshan"},
@@ -33,8 +33,8 @@
 {"tag": "Music", "title": "村上春树书里的几首曲子", "link": "2009-01-17-Haruki-Murakami-music"},
 {"tag": "Thinking", "title": "错别字", "link": "2011-04-12-wrong-word"},
 {"tag": "Thinking", "title": "倒在地上的老人扶不扶呢？", "link": "2011-11-13-old-man"},
-{"tag": "Read", "title": "读《围城》小感", "link": "2012-03-07-weicheng"},
-{"tag": "Read", "title": "关于阅读", "link": "2013-06-19-talk-about-reading"},
+{"tag": "Reading", "title": "读《围城》小感", "link": "2012-03-07-weicheng"},
+{"tag": "Reading", "title": "关于阅读", "link": "2013-06-19-talk-about-Readinging"},
 {"tag": "Thinking", "title": "关于中国政治改革的几点思考", "link": "2012-12-31-thinking-about-china"},
 {"tag": "Thinking", "title": "管理者的工具", "link": "2014-03-23-tools-of-manager"},
 {"tag": "Thinking", "title": "信不信命（二）", "link": "2011-08-16-life"},
@@ -50,7 +50,7 @@
 {"tag": "Life", "title": "梦", "link": "2013-11-13-dream"},
 {"tag": "Thinking", "title": "妓女？妓女怎么了！", "link": "2013-08-29-so-what"},
 {"tag": "Life", "title": "回家的路", "link": "2013-11-11-the-way-to-home"},
-{"tag": "Read", "title": "梁文道讲《路西法效应》而想", "link": "2011-07-24-linag-wen-dao"},
+{"tag": "Reading", "title": "梁文道讲《路西法效应》而想", "link": "2011-07-24-linag-wen-dao"},
 {"tag": "Music", "title": "了解台湾民谣", "link": "2009-03-27-taiwan-folk"},
 {"tag": "Thinking", "title": "怎样活的自由一些？", "link": "2010-03-27-how-to-freedom"},
 {"tag": "Music", "title": "一张刻录CD", "link": "2008-06-10-cd"},
@@ -74,5 +74,6 @@
 {"tag": "Leather Craft", "title": "缝啊缝", "link": "2012-08-21-leather-craft"},
 {"tag": "Undefined", "title": "Yahoo Pipes 为静态网站生成RSS", "link": "2014-05-24-RSS-auto-generated-by-yahoo-pipes-and-yql"},
 {"tag": "Travel", "title": "巴厘行", "link": "2010-07-22-Bali-Trip"},
-{"tag": "Travel", "title": "大鹏所城", "link": "2011-09-04-Dapeng-Fortress"}
+{"tag": "Travel", "title": "大鹏所城", "link": "2011-09-04-Dapeng-Fortress"},
+{"tag": "Reading", "title": "《胡适口述自传》笔记（一）", "link": "2014-06-18-reading-note"}
 ]

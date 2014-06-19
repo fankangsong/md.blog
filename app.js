@@ -1,48 +1,62 @@
-$(function() {
-    var Post = Backbone.Model.extend({
-        initialize: function(){
-            //console.log('create model');
-        },
+$(function(){
 
-        defaults: {
-            'title': '',
-            'link': ''
+    var blog = {};
+
+    //提取tag,去重tag并排序
+    blog.tags = function(){
+        /* _.chain链式操作，例如_.chain(test)，就是underscore对象化test
+            pluck提取tag
+            uniq去重tag
+            sortBy排序
+            value()还原对象化的blog.data
+        */
+        return _.chain(blog.data).pluck('tag').uniq().sortBy().value();
+    }
+
+    //分页、分组
+    blog.perPage = function(obj){
+        var index = 0;
+        var result = [];
+        result[index] = [];
+
+        if(obj.length > 10){
+            _.each(obj, function(items, i){
+                if( (i % 12) == 0 && i != 0){
+                    index++;
+                    result[index] = [];
+                }
+                result[index].push(obj[i]);
+            })
+            return result;
         }
-    });
-
-    var List = Backbone.Collection.extend({
-        initialize: function(){
-            //console.log('create collection');
-        },
-        model: Post
-    });
-
-    var AppViewMsg = Backbone.View.extend({
-        el: '#main',
-
-        initialize: function(){
-            _.bindAll(this, 'render');
-            this.render();
-        },
-
-        render: function(){
-            var template_msg = $('#msg').html();
-            $(this.el).html(template_msg);
+        else{
+            result[index] = obj;
+            return result;
         }
-    });
+    }
 
+    //筛选关于当前tag的所有文章
+    blog.tagPerPage = function(){
+        var result =  _.filter(blog.data, function(items, i){
+            return items.tag == blog.parameter
+        });
+        return result;
+    }
+
+    
     var AppView = Backbone.View.extend({
         el: '#main',
-        header: '#header',
 
         events: {
             'touchstart #iconmenu': 'menufoo'
         },
 
+        menufoo: function(){
+            $(this.header).toggleClass('expand');
+        },
+
         initialize: function(){
-            //绑定this
-            _.bindAll(this, 'filter', 'groupBy', 'archives', 'post', 'render');
-            //this.render();
+            _.bindAll(this, 'render');
         },
 
         clearup: function(){
@@ -51,193 +65,114 @@ $(function() {
         },
 
         render: function(){
-            //反序
-            META.data = _.sortBy(META.data, function(items){
-                return -( Number(items.link.substring(0, 10).replace(/\-/g, '')) );
-            });
-            
-            //首页
-            if(META._route == 'index'){
-                META._groups = this.groupBy(META.data);
-                this.archives(META._groups, 0);
-            }
+            //如果标题被修改成文章标题，替换回来
+            if($('title').attr('data-title')){$('title').html('IMFER.ME').attr('data-title', false);}
 
-            //分页
-            if(META._route == 'page'){
-                META._groups = this.groupBy(META.data);
-                this.archives(META._groups, Number(META._par - 1));
-            }
-
-            if(META._route == 'tag'){
-                META._groups = this.groupBy(this.filter());
-                this.archives(META._groups, Number(META._tag_num - 1))
-            }
-
-            //正文
-            if(META._route == 'post'){
-                this.post(this.title);
-            }
-        },
-
-        menufoo: function(){
-            $(this.header).toggleClass('expand');
-        },
-
-        filter: function(){
-            var self = this;
-            META._tags =  _.filter(META.data, function(items, i){
-                return items.tag == META._par
-            });
-            return META._tags;
-        },
-
-        groupBy: function(objs){
-            var a = 0;
-            META._groups = [];
-            META._groups[a] = [];
-
-            if(objs.length > 10){
-                for(var i = 0; i < objs.length; i++){
-                    
-                    if( (i % 12) == 0 && i != 0){
-                        a++;
-                        META._groups[a] = [];
-                    }
-                    META._groups[a].push(objs[i]);
-                }
-
-                return META._groups;
-            }
-            else{
-                META._groups[a] = objs;
-                return META._groups;
-            }
-        },
-
-        archives: function(groups, page_num){
-
-            if($('title').attr('data-title')){
-                $('title').html('IMFER.ME').attr('data-title', false);
-            }
-
-            var tags = _.pluck(META.data, 'tag');
-            tags = _.uniq(tags);
-            tags = _.sortBy(tags);
-            var current_tag = META._par;
+            /* 判断url
+                #!/tags/1 先筛选所有这个tag的文章，再blog.perPage()函数分组
+                #!/page/1 直接把blog.data用blog.perPage()函数分组
+            */
+            var perPage = blog.parameter == '' ? blog.perPage(blog.data) : blog.perPage(blog.tagPerPage());
 
             var template_main = _.template($('#template_main').html(), {
-                data: groups[page_num],
-                links: groups,
-                tags: tags,
-                current_tag: current_tag,
-                path: META._route,
-                current_num: page_num
+                perPage: perPage[blog.pagenum],
+                pagination: perPage,
+                tags: blog.tags(),
+                tags_actived: blog.parameter,
+                routename: blog.routename,
+                currentPage: blog.pagenum
             });
             $(this.el).html(template_main);
+        }
+        
+    });
+
+    var PostView = Backbone.View.extend({
+        el: '#main',
+        initialize: function(){
+            _.bindAll(this, 'render')
         },
 
-        post: function(){
+        clearup: function(){
+            this.undelegateEvents();
+            $(this.el).empty();
+        },
+
+        render: function(){
             var self = this;
 
-            var bar = $('.bar');
-            bar.animate({
-                'width': '80%'
-            }, 500);
-
-            $('.footer').addClass('fix');
-
             //加个title
-            META.page_title = $('title').html();
-            _.each(META.data, function(items, i){
-                if(META._par == items.link){
-                   $('title').html(items.title + '- ' + META.page_title).attr('data-title', true);
-                   META.post_title = items.title;
+            var title = $('title');
+            titlehtml = title.html();
+            _.each(blog.data, function(items, i){
+                if(blog.parameter == items.link){
+                   title.html(items.title + '- ' + titlehtml).attr('data-title', true);
+                   blog.title = items.title;
                 }
             });
 
             //渲染markdown
             var showpost = new Showdown.converter();
-            $.get('post/' + META._par + '.md?' + Math.random(), function(response){
-                var template_post = _.template($('#template_post').html(), {
+            $.get('post/' + blog.parameter + '.md?' + Math.random(), function(response){
+                var template =  _.template($('#template_post').html(), {
                     post: showpost.makeHtml(response),
-                    link: META._par,
-                    title: META.post_title
+                    link: blog.parameter,
+                    title: blog.title
                 });
-
-                $(self.el).html(template_post);
-
-            }).done(function(){
-                bar.animate({
-                'width': '100%'
-                }, 200, function(){
-                    bar.css({
-                        'width': 0
-                    })
-                })
-            }).fail(function(){
-                bar.animate({
-                'width': '0'
-                }, 200);
-                var msg = new AppViewMsg();
-            });
+                $(self.el).html(template);
+            })
         }
-        
-    });
+    })
 
     var AppRouter = Backbone.Router.extend({
         routes: {
             '': 'index',
             '!page/:num': 'page',
             '!tags/:tag/:num': 'tag',
-            '!post/:title': 'post',
+            '!post/:title': 'post'
         },
 
-        view: function (appview, _route, _par, _tag_num) {
-            META._route = _route;
-            META._par = _par;
-            META._tag_num = _tag_num;
+        view: function (appview, routename, parameter, pagenum) {
+            blog.routename = routename;
+            blog.parameter = parameter;
+            blog.pagenum   = pagenum;
 
-            if(this.currentView){
-                this.currentView.clearup();
+            if(this.thisView){
+                this.thisView.clearup();
             }
-            this.currentView = appview;
-            this.currentView.render();
+            this.thisView = appview;
+            this.thisView.render();
         },
 
         index: function(){
             var appview = new AppView();
-            this.view(appview, 'index');
+            this.view(appview, 'index', '', 0);
         },
 
         page: function(num){
             var appview = new AppView();
-            this.view(appview, 'page', num);
+            this.view(appview, 'page', '', Number(num - 1));
         },
 
         tag: function(tag, num){
             var appview = new AppView();
-            this.view(appview, 'tag', tag, num);
+            this.view(appview, 'tag', tag, Number(num - 1));
         },
 
         post: function(title){
-            var appview = new AppView();
-            this.view(appview, 'post', title);
+            var appview = new PostView();
+            this.view(appview, 'post', title, 0);
         }
     });
 
 
 
-    var META = new List();
-    META.fetch({
-        url: 'meta.json?' + Math.random(),
-        success: function(collection, response){
-            META.data = response;
-            var app = new AppRouter;
-            Backbone.history.start();
-        },
-        error: function(collection, response){
-            var msg = new AppViewMsg();
-        }
+    $.getJSON('meta.json', function(response){
+        blog.data = _.sortBy(response, function(items){
+            return -( Number(items.link.substring(0, 10).replace(/\-/g, '')) );
+        });
+    }).done(function(){
+        var appRoute = new AppRouter;
+        Backbone.history.start();
     });
-
 });
