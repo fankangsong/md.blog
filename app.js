@@ -2,6 +2,31 @@ $(function(){
 
     var blog = {};
 
+    blog.msg = '未知错误。';
+
+    blog.showpost = new Showdown.converter();
+
+    blog.duoshuo = function(){
+        window.duoshuoQuery = {short_name:"imfer"};
+        function ds(){
+            var el = document.createElement('div');
+            el.setAttribute('data-thread-key', blog.parameter);
+            el.setAttribute('data-url', 'http://blog.imfer.me/#!/post/' + blog.parameter);
+            el.setAttribute('data-title', blog.title);
+            DUOSHUO.EmbedThread(el)
+            $('.post-content').append(el);
+        }
+
+        if(typeof(DUOSHUO) == 'undefined'){
+            $.getScript('http://static.duoshuo.com/embed.js', function(){
+                ds();
+            });
+        }
+        else{
+            ds();
+        }
+    }
+
     //提取tag,去重tag并排序
     blog.tags = function(){
         /* _.chain链式操作，例如_.chain(test)，就是underscore对象化test
@@ -43,16 +68,29 @@ $(function(){
         return result;
     }
 
+    var MsgView = Backbone.View.extend({
+        el: '#main',
+
+        initialize: function(){
+            _.bindAll(this, 'render');
+            this.render();
+        },
+
+        render: function(){
+            var template = _.template($('#msg').html(), {
+                msg: blog.msg
+            });
+            $(this.el).html(template);
+        }
+    });
+
     
     var AppView = Backbone.View.extend({
         el: '#main',
+        elHeader: '#header',
 
-        events: {
-            'touchstart #iconmenu': 'menufoo'
-        },
-
-        menufoo: function(){
-            $(this.header).toggleClass('expand');
+        expandMenu: function(){
+            $(this.elHeader).toggleClass('expand');
         },
 
         initialize: function(){
@@ -101,7 +139,7 @@ $(function(){
         render: function(){
             var self = this;
 
-            //加个title
+            //title
             var title = $('title');
             titlehtml = title.html();
             _.each(blog.data, function(items, i){
@@ -112,21 +150,34 @@ $(function(){
             });
 
             //渲染markdown
-            var showpost = new Showdown.converter();
+            
             $.get('post/' + blog.parameter + '.md?' + Math.random(), function(response){
                 var template =  _.template($('#template_post').html(), {
-                    post: showpost.makeHtml(response),
+                    post: blog.showpost.makeHtml(response),
                     link: blog.parameter,
                     title: blog.title
                 });
                 $(self.el).html(template);
+            }).done(function(){
+                blog.duoshuo();
             })
+            .fail(function() {
+                blog.msg = '文件不存在，或者已经删除了。<br><a href="#">回首页</a>';
+                var error = new MsgView();
+            });
         }
-    })
+    });
+
+	var aboutView = Backbone.View.extend({
+		initialize: function(){
+			console.log('about view')
+		}
+	})
 
     var AppRouter = Backbone.Router.extend({
         routes: {
             '': 'index',
+            '!about': 'about',
             '!page/:num': 'page',
             '!tags/:tag/:num': 'tag',
             '!post/:title': 'post'
@@ -142,6 +193,11 @@ $(function(){
             }
             this.thisView = appview;
             this.thisView.render();
+        },
+
+        about: function(){
+    		var appview = new PostView();
+            this.view(appview, 'post', 'about', 0);
         },
 
         index: function(){
@@ -165,14 +221,17 @@ $(function(){
         }
     });
 
+	var app;
 
+    //加载状态
+    $('#main').html('<div class="loading">加载...</div>');
 
     $.getJSON('meta.json', function(response){
         blog.data = _.sortBy(response, function(items){
             return -( Number(items.link.substring(0, 10).replace(/\-/g, '')) );
         });
     }).done(function(){
-        var appRoute = new AppRouter;
+        app = new AppRouter;
         Backbone.history.start();
     });
 });
