@@ -8,8 +8,8 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>IMFER.ME</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>出走 - blog.imfer.me</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui">
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <link rel="shortcut icon" href="http://imfer.me/favicon.ico?8964" type="image/x-icon" >
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -22,7 +22,7 @@
 <link rel="apple-touch-icon" sizes="152x152" href="http://imfer.me/apple-touch-icon-152x152.png" />
 <link rel="alternate" type="application/rss+xml" href="http://pipes.yahoo.com/pipes/pipe.run?_id=cb3011f4a5a125baec76a025cd679b9e&_render=rss" title="RSS Feed">
 <link rel="stylesheet" type="text/css" href="http://imfer.me/icons.css">
-<link rel="stylesheet" type="text/css" href="style.css?2gedaf">
+<link rel="stylesheet" type="text/css" href="css/style.css?20140630">
 <script>
 var _hmt = _hmt || [];
 </script>
@@ -32,31 +32,35 @@ var _hmt = _hmt || [];
 <p class="msg">抱歉，你的浏览器版本太低，试试<a href="http://rj.baidu.com/soft/detail/14744.html" target="_blank">Google Chrome浏览器</a></p>
 <![endif]-->
 
-
+<!-- 消息模版 start -->
 <script type="text/template" id="msg">
 <p class="msg"><%= msg %></p>
 </script>
+<!-- 消息模版 end -->
 
+<!-- 首页模版 start -->
 <script type="text/template" id="template_main">
-
 <!-- header -->
 <div class="header" id="header">
     <a href="javascript:;" onclick="_hmt.push(['_trackEvent', 'nav', 'click', 'menu'])" id="menu" class="icon-menu"></a>
 
     <div class="inner">
         <img src="https://avatars1.githubusercontent.com/u/554934?s=200" class="avatar">
-        <p class="about">音乐、皮艺、摄影、电影爱好者。职业网页前端开发。<a href="#!about" class="about-lnk">更多...</a></p>
+        <p class="about">音乐、皮艺、摄影、电影爱好者。前端开发，<a href="#!/about" class="about-lnk" onclick="_hmt.push(['_trackPageview', '/#!/about'])">更多...</a></p>
 
         <ul class="tags">
-        <li><a href="/#" onclick="_hmt.push(['_trackPageview', '/#'])">首页</a></li>
+        <li><a href="/#!/" onclick="_hmt.push(['_trackPageview', '/#'])">首页</a></li>
         <% _.each(tags, function(items, i){ %>
             <li 
                 <% if(items == tags_actived){ %>
                     class="current"
                 <% } %>
-            ><a href="#!tags/<%= items %>/1" onclick="_hmt.push(['_trackPageview', '/#!/tags/<%= items %>/1'])"><%= items %></a></li>
+            ><a href="#!/tags/<%= items %>/1" onclick="_hmt.push(['_trackPageview', '/#!/tags/<%= items %>/1'])"><%= items %></a></li>
         <% }) %>
         </ul> <!-- tags end -->
+        <ul class="ext">
+            <li><a href="#!/links" onclick="_hmt.push(['_trackPageview', '/#!/links'])">友邻</a></li>
+        <ul>
     </div>
 </div>
 <!-- header end -->
@@ -67,7 +71,7 @@ var _hmt = _hmt || [];
     <!-- archives -->
     <ul class="archives">
     <% _.each(perPage, function(items){ %>
-        <li><a href="#!post/<%= items.link %>" onclick="_hmt.push(['_trackPageview', '/#!/post/<%= items.link %>'])"><%= items.title %></a>
+        <li><a href="#!/post/<%= items.link %>" onclick="_hmt.push(['_trackPageview', '/#!/post/<%= items.link %>'])"><%= items.title %></a>
             <span class="date"><%= items.link.substring(0, 10) %></span>
         </li>
     <% }) %>
@@ -80,9 +84,9 @@ var _hmt = _hmt || [];
     <% if(pagination.length > 1){ %>
         <% _.each(pagination, function(items, i){ %>
                 <% if(routename == 'tag'){ %>
-                    <a href="#!tags/<%= tags_actived %>/<%= Number(i + 1) %>" onclick="_hmt.push(['_trackPageview', '/#!/<%= tags_actived %>/<%= Number(i + 1) %>'])"
+                    <a href="#!/tags/<%= tags_actived %>/<%= Number(i + 1) %>" onclick="_hmt.push(['_trackPageview', '/#!/<%= tags_actived %>/<%= Number(i + 1) %>'])"
                 <% } else{ %>
-                    <a href="#!page/<%= Number(i + 1) %>" onclick="_hmt.push(['_trackPageview', '/#!/page/<%= Number(i + 1) %>'])"
+                    <a href="#!/page/<%= Number(i + 1) %>" onclick="_hmt.push(['_trackPageview', '/#!/page/<%= Number(i + 1) %>'])"
                 <% } %>
                 <% if(i == currentPage){ %>
                     class="current"
@@ -107,10 +111,14 @@ var _hmt = _hmt || [];
 <!-- footer end -->
 </script>
 
+<!-- 首页模版 end -->
+
+
+<!-- 文章页面模版 start -->
 <script type="text/tempalte" id="template_post">
 
 <div class="post-content">
-    <div class="post-hd"><a href="#" class="icon-home" title="返回首页" onclick="_hmt.push(['_trackEvent', 'content', 'click', 'home'])"></a></div>
+    <div class="post-hd"><a href="#!/" class="icon-home" title="返回首页" onclick="_hmt.push(['_trackEvent', 'content', 'click', 'home'])"></a></div>
     <div class="post-bd">
         <a class="icon-link" href="http://blog.imfer.me/#!post/<%= link %>" title="文章链接"></a>
         <%= post %>
@@ -119,6 +127,7 @@ var _hmt = _hmt || [];
     <a href="https://twitter.com/share?url=http%3A%2F%2Fblog.imfer.me%2F%23%21post%2F<%= link %>&screen_name=boogiefer&text=<%= title %>" onclick="_hmt.push(['_trackEvent', 'share', 'click', 'twitter'])" target="_blank">@Twitter</a> / 
     <a href="http://www.douban.com/share/service?href=http%3A%2F%2Fblog.imfer.me%2F%23%21post%2F<%= link %>&comment=@fks1945&name=<%= title %>&sel=&v=1" target="_blank" onclick="_hmt.push(['_trackEvent', 'share', 'click', 'douban'])">@豆瓣</a>
     </div>
+    <div id="disqus_thread"></div>
 </div>
 
 <div class="footer">
@@ -129,24 +138,20 @@ var _hmt = _hmt || [];
 </div>
 </script>
 
-<div class="page" id="main"></div>
+<!-- 文章页面模版 end -->
 
+<div class="page" id="main"></div>
+<!-- 
 <script>
 var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
         document.write(unescape("%3Cscript src='" + _bdhmProtocol + 
 "hm.baidu.com/h.js%3F28042cf68929a02fefcb56e53dce2401' type='text/javascript'%3E%3C/script%3E"));
 </script>
- 
+ -->
 <script src="http://cdn.staticfile.org/jquery/1.9.0/jquery.min.js"></script>
 <script src="http://cdn.staticfile.org/underscore.js/1.6.0/underscore-min.js"></script>
 <script src="http://cdn.staticfile.org/backbone.js/1.1.2/backbone-min.js"></script>
 <script src='http://cdn.staticfile.org/showdown/0.3.1/showdown.min.js'></script>
-
-<script type="text/javascript">
-
-</script>
-
-
-<script src="app.js?ywgf62"></script>
+<script src="js/app.js?2014063012"></script>
 </body>
 </html>
