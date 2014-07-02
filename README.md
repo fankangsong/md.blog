@@ -1,7 +1,7 @@
 md.blog
 =======
 
-DEMO:[blog.imfer.me](http://blog.imfer.me)
+DEMO:[blog.imfer.me](http://blog.imfer.me)、[Google爬虫结果](https://www.google.com.hk/search?newwindow=1&es_sm=93&q=site%3Ablog.imfer.me&oq=site%3Ablog.imfer.me&gs_l=serp.3...1855927.1857925.0.1858029.18.9.0.0.0.0.155.155.0j1.1.0....0...1c.1.48.serp..18.0.0.ly1BRMHZlrc)
 
 ##开始使用
 
